@@ -1,0 +1,23 @@
+<resources>
+    <string name="app_name">Afri-Ride Admin</string>
+
+    <!-- Login Page String Resources-->
+    <string name="login">Login</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="forgot_password">Forgot Password?</string>
+    <string name="remember_me">Remember Me</string>
+
+    <!-- Loading Dialog String Resources -->
+    <string name="loading">Loading</string>
+    <string name="please_wait">Please wait…</string>
+
+    <!-- Forgot Password Page -->
+    <string name="forgot_password_content">Oops! Looks like you\'ve forgotten your password. But that\'s okay, enter the email address you used to create your account and we\'ll send you a link to reset your password.\n\nIn case you do not get an email, kindly check your spam folder because our mails sometimes end up there for some reason.</string>
+    <string name="send_reset_mail">Reset Password</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="welcome_username">Welcome %s</string>
+    <string name="admin_accounts">Admin Accounts</string>
+    <string name="driver_accounts">Driver Accounts</string>
+</resources>
