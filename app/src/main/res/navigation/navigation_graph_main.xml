@@ -27,6 +27,9 @@
         <action
             android:id="@+id/action_homePage_to_driverAccountsPage"
             app:destination="@id/driverAccountsPage" />
+        <action
+            android:id="@+id/action_homePage_to_adminAccountsPage"
+            app:destination="@id/adminAccountsPage" />
     </fragment>
     <fragment
         android:id="@+id/forgotPasswordPage"
@@ -38,4 +41,9 @@
         android:name="com.transportation.afriride_admin.DriverAccountsPage"
         android:label="fragment_driver_accounts_page"
         tools:layout="@layout/fragment_driver_accounts_page" />
+    <fragment
+        android:id="@+id/adminAccountsPage"
+        android:name="com.transportation.afriride_admin.AdminAccountsPage"
+        android:label="fragment_admin_accounts_page"
+        tools:layout="@layout/fragment_admin_accounts_page" />
 </navigation>

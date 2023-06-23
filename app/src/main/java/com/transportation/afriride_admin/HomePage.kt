@@ -49,7 +49,7 @@ class HomePage : Fragment() {
     }
 
     private fun openAdminAccountsPage() {
-        //TODO("Not yet implemented")
+        findNavController().navigate(R.id.action_homePage_to_adminAccountsPage)
     }
 
     private fun setWelcomeText(){
