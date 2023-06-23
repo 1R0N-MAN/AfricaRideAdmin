@@ -20,4 +20,5 @@
     <string name="welcome_username">Welcome %s</string>
     <string name="admin_accounts">Admin Accounts</string>
     <string name="driver_accounts">Driver Accounts</string>
+    <string name="add_driver">Add Driver</string>
 </resources>
