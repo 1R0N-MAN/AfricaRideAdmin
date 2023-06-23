@@ -6,8 +6,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.cardview.widget.CardView
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.RecyclerView
+import com.squareup.picasso.Picasso
 
 class DriverAccountsRecyclerAdapter(
     private val context: Context,
@@ -15,7 +16,7 @@ class DriverAccountsRecyclerAdapter(
     ):RecyclerView.Adapter<DriverAccountsRecyclerAdapter.MyViewHolder>() {
 
     class MyViewHolder(itemView: View): RecyclerView.ViewHolder(itemView){
-        val driverAccountCard: CardView = itemView.findViewById(R.id.driverAccountCard)
+        val driverAccountCard: ConstraintLayout = itemView.findViewById(R.id.driverAccountCard)
         val driverProfilePic: ImageView = itemView.findViewById(R.id.driverProfilePic)
         val driverLicensePlate: TextView = itemView.findViewById(R.id.driverLicensePlate)
         val driverName: TextView = itemView.findViewById(R.id.driverName)
@@ -32,7 +33,7 @@ class DriverAccountsRecyclerAdapter(
             openDriverAccountPage()
         }
 
-        holder.driverProfilePic.setImageResource(driverAccount.profilePic)
+        Picasso.get().load(driverAccount.profilePicUrl).into(holder.driverProfilePic)
         holder.driverLicensePlate.text = driverAccount.licensePlate
         holder.driverName.text = driverAccount.driverName
     }

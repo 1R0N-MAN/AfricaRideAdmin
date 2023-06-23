@@ -23,10 +23,19 @@
         android:id="@+id/homePage"
         android:name="com.transportation.afriride_admin.HomePage"
         android:label="fragment_home_page"
-        tools:layout="@layout/fragment_home_page" />
+        tools:layout="@layout/fragment_home_page" >
+        <action
+            android:id="@+id/action_homePage_to_driverAccountsPage"
+            app:destination="@id/driverAccountsPage" />
+    </fragment>
     <fragment
         android:id="@+id/forgotPasswordPage"
         android:name="com.transportation.afriride_admin.ForgotPasswordPage"
         android:label="fragment_forgot_password_page"
         tools:layout="@layout/fragment_forgot_password_page" />
+    <fragment
+        android:id="@+id/driverAccountsPage"
+        android:name="com.transportation.afriride_admin.DriverAccountsPage"
+        android:label="fragment_driver_accounts_page"
+        tools:layout="@layout/fragment_driver_accounts_page" />
 </navigation>

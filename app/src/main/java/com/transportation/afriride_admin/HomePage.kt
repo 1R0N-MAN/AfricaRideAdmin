@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.cardview.widget.CardView
+import androidx.navigation.fragment.findNavController
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -44,7 +45,7 @@ class HomePage : Fragment() {
     }
 
     private fun openDriverAccountsPage() {
-        //TODO("Not yet implemented")
+        findNavController().navigate(R.id.action_homePage_to_driverAccountsPage)
     }
 
     private fun openAdminAccountsPage() {
