@@ -15,11 +15,16 @@
     <!-- Forgot Password Page -->
     <string name="forgot_password_content">Oops! Looks like you\'ve forgotten your password. But that\'s okay, enter the email address you used to create your account and we\'ll send you a link to reset your password.\n\nIn case you do not get an email, kindly check your spam folder because our mails sometimes end up there for some reason.</string>
     <string name="send_reset_mail">Reset Password</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <!-- Home Page -->
     <string name="welcome_username">Welcome %s</string>
     <string name="admin_accounts">Admin Accounts</string>
     <string name="driver_accounts">Driver Accounts</string>
     <string name="add_driver">Add Driver</string>
+
+    <!-- Add Admin Account Page -->
     <string name="create_new_admin">Create New Admin</string>
+    <string name="change_profile_picture">Change Profile Picture</string>
+    <string name="username">Username</string>
+    <string name="create_admin">Create Admin</string>
 </resources>

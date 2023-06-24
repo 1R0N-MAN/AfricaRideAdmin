@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.QueryDocumentSnapshot
@@ -32,11 +33,16 @@ class AdminAccountsPage : Fragment() {
         adminAccountsRecyclerView = view.findViewById(R.id.adminAccountsRecyclerView)
 
         addAdminAccountButton = view.findViewById(R.id.addAdminAccountButton)
+        addAdminAccountButton.setOnClickListener{ openAddAdminAccountPage() }
 
         db = Firebase.firestore
 
         getAdminAccounts()
         return view
+    }
+
+    private fun openAddAdminAccountPage() {
+        findNavController().navigate(R.id.action_adminAccountsPage_to_addAdminAccountPage)
     }
 
     private fun getAdminAccounts() {
