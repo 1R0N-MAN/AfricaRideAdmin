@@ -27,4 +27,5 @@
     <string name="change_profile_picture">Change Profile Picture</string>
     <string name="username">Username</string>
     <string name="create_admin">Create Admin</string>
+    <string name="confirm_password">Confirm Password</string>
 </resources>

@@ -22,6 +22,10 @@ import androidx.appcompat.app.AlertDialog
 import androidx.core.graphics.drawable.toBitmap
 import androidx.navigation.fragment.findNavController
 import com.google.android.gms.tasks.Task
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.auth.UserProfileChangeRequest
+import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
@@ -36,10 +40,13 @@ class AddAdminAccountPage : Fragment() {
     private lateinit var changeProfilePicButton: Button
     private lateinit var usernameEditText: EditText
     private lateinit var emailEditText: EditText
+    private lateinit var passwordEditText: EditText
+    private lateinit var confirmPasswordEditText: EditText
     private lateinit var createAdminButton: Button
     private lateinit var db: FirebaseFirestore
     private lateinit var storageRef: StorageReference
     private lateinit var dialog: AlertDialog
+    private lateinit var auth: FirebaseAuth
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -57,72 +64,115 @@ class AddAdminAccountPage : Fragment() {
 
         usernameEditText = view.findViewById(R.id.usernameEditText)
         emailEditText = view.findViewById(R.id.emailEditText)
+        passwordEditText = view.findViewById(R.id.passwordEditText)
+        confirmPasswordEditText = view.findViewById(R.id.confirmPasswordEditText)
 
         createAdminButton = view.findViewById(R.id.createAdminButton)
         createAdminButton.setOnClickListener {
-            createAdmin()
+            initiateSignup()
         }
 
         db = Firebase.firestore
+        auth = Firebase.auth
         val storage = Firebase.storage
         storageRef = storage.reference
         return view
     }
 
-    private fun createAdmin() {
-        showLoadingPopup()
+    private fun initiateSignup() {
+        hideKeyboard()
+        val username = usernameEditText.text.toString().trim()
+        val email = emailEditText.text.toString().trim()
+        val password = passwordEditText.text.toString()
+        val confirmPassword = confirmPasswordEditText.text.toString()
 
+        when {
+            username.isEmpty() -> {
+                Toast.makeText(context, "Please enter a valid username", Toast.LENGTH_SHORT).show()
+            }
+            username.length < 2 -> {
+                Toast.makeText(context, "Username must be at least 2 characters long", Toast.LENGTH_SHORT).show()
+            }
+            email.isEmpty() -> {
+                Toast.makeText(context, "Please enter your email address", Toast.LENGTH_SHORT).show()
+            }
+            password.isEmpty() -> {
+                Toast.makeText(context, "Please enter your password", Toast.LENGTH_SHORT).show()
+            }
+            password.length < 8 -> {
+                Toast.makeText(context, "Password must contain at least 8 characters", Toast.LENGTH_SHORT).show()
+            }
+            !containsAlphabetAndDigit(password) -> {
+                Toast.makeText(context, "Password must contain at least one alphabet and one digit", Toast.LENGTH_SHORT).show()
+            }
+            confirmPassword != password -> {
+                Toast.makeText(context, "Passwords do not match", Toast.LENGTH_SHORT).show()
+            }
+            else -> {
+                signupUser(username, email, password)
+            }
+        }
+    }
+
+    private fun containsAlphabetAndDigit(input: String): Boolean {
+        val regex = "^(?=.*[A-Za-z])(?=.*\\d).+\$".toRegex()
+        return regex.matches(input)
+    }
+
+    private fun signupUser(username: String, email: String, password: String) {
+        showLoadingPopup()
+        auth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(requireActivity()) { task ->
+            if(task.isSuccessful){
+                val newUser = task.result.user
+                if (newUser != null){
+                    // set user displayName to username
+                    updateUsername(newUser, username)
+                    createAdmin(newUser.uid, username, email)
+                }
+            }
+        }.addOnFailureListener { exception ->
+            dialog.dismiss()
+            Toast.makeText(requireContext(), exception.localizedMessage, Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun updateUsername(user: FirebaseUser, username: String){
+        val profileUpdates = UserProfileChangeRequest.Builder()
+            .setDisplayName(username)
+            .build()
+
+        user.updateProfile(profileUpdates)
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful){
+                    Log.d(tag, "Username successfully updated")
+                }
+                else {
+                    Toast.makeText(requireContext(), "Failed to update username", Toast.LENGTH_SHORT).show()
+                }
+            }
+    }
+
+    private fun createAdmin(adminId: String, username: String, email: String) {
         // Get reference to admin collection
-        val adminRef = db.collection("admin").document()
-        // Get admin data from views
-        val username = usernameEditText.text.toString()
-        val email = emailEditText.text.toString()
+        val adminRef = db.collection("admin").document(adminId)
+        // Get admin data
         val adminProfileData = hashMapOf(
             "username" to username,
             "email" to email
         )
-
-        // TODO: Create Admin Account should also sign up user using email and password
 
         // create new document and store admin data in document
         adminRef.set(adminProfileData).addOnSuccessListener {
             // get document id and bitmap from adminProfilePic ImageView
             val bitmap = adminProfilePic.drawable.toBitmap()
             // call uploadImageToFirebase() method
-            val adminId = adminRef.id
             uploadImageToFirebase(bitmap, adminId)
         }
-        .addOnFailureListener { e ->
-            Log.w(tag, "Error creating admin", e)
-            Toast.makeText(context, "Error Creating Admin!", Toast.LENGTH_LONG).show()
-            dialog.dismiss()
-        }
-    }
-
-    private val selectImageLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-        if (result.resultCode == Activity.RESULT_OK) {
-            val data: Intent? = result.data
-            val selectedImage = data?.data
-            // Process the selected image
-            selectedImage?.let {
-                val bitmap: Bitmap? = loadBitmapFromUri(it)
-                bitmap?.let {
-                    // TODO: Profile pics can be unnecessarily large; must find a way to compress it
-
-                    adminProfilePic.setImageBitmap(bitmap)
-                }
+            .addOnFailureListener { e ->
+                Log.w(tag, "Error creating admin", e)
+                Toast.makeText(context, "Error Creating Admin!", Toast.LENGTH_LONG).show()
+                dialog.dismiss()
             }
-        }
-    }
-
-    private fun loadBitmapFromUri(uri: Uri): Bitmap? {
-        return try {
-            val inputStream = requireContext().contentResolver.openInputStream(uri)
-            BitmapFactory.decodeStream(inputStream)
-        } catch (e: IOException) {
-            e.printStackTrace()
-            null
-        }
     }
 
     private fun uploadImageToFirebase(bitmap: Bitmap, adminId: String) {
@@ -130,7 +180,7 @@ class AddAdminAccountPage : Fragment() {
 
         // Convert the Bitmap to a byte array
         val byteArrayOutputStream = ByteArrayOutputStream()
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayOutputStream)
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 70, byteArrayOutputStream)
         val data = byteArrayOutputStream.toByteArray()
 
         // Upload the byte array to Firebase Storage
@@ -170,6 +220,30 @@ class AddAdminAccountPage : Fragment() {
     private fun selectImageFromGallery() {
         val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
         selectImageLauncher.launch(intent)
+    }
+
+    private val selectImageLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            val data: Intent? = result.data
+            val selectedImage = data?.data
+            // Process the selected image
+            selectedImage?.let {
+                val bitmap: Bitmap? = loadBitmapFromUri(it)
+                bitmap?.let {
+                    adminProfilePic.setImageBitmap(bitmap)
+                }
+            }
+        }
+    }
+
+    private fun loadBitmapFromUri(uri: Uri): Bitmap? {
+        return try {
+            val inputStream = requireContext().contentResolver.openInputStream(uri)
+            BitmapFactory.decodeStream(inputStream)
+        } catch (e: IOException) {
+            e.printStackTrace()
+            null
+        }
     }
 
     private fun showLoadingPopup() {

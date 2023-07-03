@@ -11,7 +11,6 @@ const val REMEMBER_ME_BOOLEAN_VALUE_SHPR = "REMEMBER_ME_SHARED_PREFERENCES"
 const val STORED_ADMIN_EMAIL = "STORED_ADMIN_EMAIL"
 const val STORED_ADMIN_PASSWORD = "STORED_ADMIN_PASSWORD"
 const val DRIVERS_DATA_PATH = "drivers"
-const val PASSENGER_DATA_PATH = "passenger-data"
 const val TAG = "Africa Ride Debugging"
 const val DRIVER_DETAILS_LIST = "driverDetailsList"
 
